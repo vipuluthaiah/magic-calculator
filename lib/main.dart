@@ -39,8 +39,8 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   var height;
   var width;
-  String _display = "123241";
-  String _expectedString = "";
+  String _display = "0";
+  String _expectedString = "123456";
   TextEditingController _c;
 
   TextStyle defaultButtonTextStyle = TextStyle(
