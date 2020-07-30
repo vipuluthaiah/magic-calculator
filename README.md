@@ -1,16 +1,16 @@
 # magicCalculator
 
-A new Flutter project.
+First real Flutter project
 
-## Getting Started
+## What it does
 
-This project is a starting point for a Flutter application.
+A non-functional calculator only meant to return a predefined value.
+When using the app, click the history and enter the value you want,
+click enter and watch as the output field ignores all rules of math.
 
-A few resources to get you started if this is your first Flutter project:
+## But why?
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
-
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+As my first flutter project based on [Mike boyds magical calculator](https://www.youtube.com/watch?v=W89i7qqhuLQ)
+Simple meant to fuck with your friends, save yourself some embarrassment,
+when blurting out a wrong math equation.
+The possibilities are almost endless (not really)...  
