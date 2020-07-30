@@ -11,19 +11,6 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or simply save your changes to "hot reload" in a Flutter IDE).
-        // Notice that the counter didn't reset back to zero; the application
-        // is not restarted.
-        primarySwatch: Colors.blue,
-        // This makes the visual density adapt to the platform that you run
-        // the app on. For desktop platforms, the controls will be smaller and
-        // closer together (more dense) than on mobile platforms.
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
       home: MyHomePage(title: 'Flutter Demo Home Page'),
@@ -50,26 +37,39 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
   var height;
   var width;
   String _display = "123241";
+  String _expectedString = "";
+  TextEditingController _c;
 
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
+  TextStyle defaultButtonTextStyle = TextStyle(
+    color: Colors.white,
+    fontFamily: 'Avenir',
+    fontStyle: FontStyle.normal,
+    fontSize: 30.0,
+    fontWeight: FontWeight.w400,
+  );
+  Color defaultOrange = Colors.yellow[700];
+
+  @override
+  initState() {
+    _c = new TextEditingController();
+    super.initState();
   }
 
   Function _addNumber(int num) {
     return () {
       setState(() {
         _display += num.toString();
+      });
+    };
+  }
+
+  Function _addOperator(String op) {
+    return () {
+      setState(() {
+        _display += op;
       });
     };
   }
@@ -87,72 +87,121 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
+  void promptNumberSelection() {
+    showDialog(
+        child: new Dialog(
+          child: new Column(
+            children: <Widget>[
+              new TextField(
+                decoration: new InputDecoration(hintText: "Expected Number"),
+                controller: _c,
+              ),
+              new FlatButton(
+                child: new Text("Save"),
+                onPressed: () {
+                  setState(() {
+                    this._expectedString = _c.text;
+                  });
+                  Navigator.pop(context);
+                },
+              )
+            ],
+          ),
+        ),
+        context: context);
+  }
+
+  void onEnterClick() {
+    setState(() {
+      _display = _expectedString;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     width = MediaQuery.of(context).size.width;
     height = MediaQuery.of(context).size.height;
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Colors.grey[900],
+      appBar: AppBar(
+        title: Text("Calculator"),
+        backgroundColor: Colors.grey[850],
+        actions: <Widget>[
+          Padding(
+            padding: EdgeInsets.only(right: 16),
+            child: IconButton(
+              icon: Icon(Icons.history),
+              onPressed: promptNumberSelection,
+            ),
+          ),
+        ],
+      ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
             Container(
-              alignment: Alignment.bottomRight,
-              width: width,
-              height: (height / 100) * 40,
-              child: Text(
-                '$_display',
-                style: TextStyle(
-                  fontFamily: 'Avenir',
-                  fontStyle: FontStyle.normal,
-                  color: Colors.black,
-                  fontSize: 60.0,
-                ),
-              ),
-            ),
-            Expanded(
-              child: Row(
-                children: <Widget>[
-                  Container(
-                    padding: EdgeInsets.all(30.0),
-                    color: Colors.grey[850],
-                    child: Column(
-                      children: <Widget>[
-                        Expanded(
-                          child: Row(
-                            children: <Widget>[
-                              buildFunctionKey('AC', _clearDisplay),
-                              buildFunctionKey('DEL', _backspace),
-                            ],
-                          ),
-                        ),
-                        Expanded(child: buildNumberRow([7, 8, 9])),
-                        Expanded(child: buildNumberRow([4, 5, 6])),
-                        Expanded(child: buildNumberRow([1, 2, 3])),
-                        Expanded(
-                          child: Row(
-                            children: <Widget>[
-                              buildFunctionKey('.', () {}),
-                              buildKey(0),
-                              buildFunctionKey('=', () {}),
-                            ],
-                          ),
-                        ),
-                      ],
+                alignment: Alignment.bottomRight,
+                width: width,
+                height: (height / 100) * 30,
+                padding: EdgeInsets.fromLTRB(8, 8, 8, 48),
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Text(
+                    '$_display',
+                    style: TextStyle(
+                      fontFamily: 'Avenir',
+                      fontStyle: FontStyle.normal,
+                      color: Colors.white,
+                      fontSize: 60.0,
                     ),
+                    overflow: TextOverflow.visible,
                   ),
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      buildFunctionKey('÷', () {}),
-                      buildFunctionKey('x', () {}),
-                      buildFunctionKey('-', () {}),
-                      buildFunctionKey('+', () {}),
-                      buildFunctionKey('=', () {}),
-                    ],
-                  )
-                ],
+                )),
+            Expanded(
+              child: Container(
+                color: Colors.grey[850],
+                child: Column(
+                  children: <Widget>[
+                    Expanded(
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: <Widget>[
+                          buildFunctionKey('AC',
+                              onPressed: _clearDisplay,
+                              textColor: Colors.white),
+                          buildFunctionKey('DEL',
+                              onPressed: _backspace, textColor: Colors.white),
+                          buildFunctionKey('%', textColor: Colors.white),
+                          buildFunctionKey('÷')
+                        ],
+                      ),
+                    ),
+                    Expanded(
+                        child:
+                            buildNumberRow([7, 8, 9], [buildFunctionKey('×')])),
+                    Expanded(
+                        child:
+                            buildNumberRow([4, 5, 6], [buildFunctionKey('-')])),
+                    Expanded(
+                        child:
+                            buildNumberRow([1, 2, 3], [buildFunctionKey('+')])),
+                    Expanded(
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: <Widget>[
+                          buildFunctionKey('.', textColor: Colors.white),
+                          buildKey(0),
+                          buildFunctionKey('()', textColor: Colors.white),
+                          Expanded(
+                            child: createFlatButton('=', onEnterClick,
+                                backgroundColor: defaultOrange),
+                          )
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ],
@@ -161,37 +210,37 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  Row buildNumberRow(List<int> nums) {
+  Row buildNumberRow(List<int> nums, [List extra]) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: <Widget>[...nums.map(buildKey)],
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[...nums.map(buildKey), ...extra],
     );
   }
 
   Expanded buildKey(int num) {
-    return buildFunctionKey(num.toString(), _addNumber(num));
+    return Expanded(
+      child: createFlatButton(num.toString(), _addNumber(num)),
+    );
   }
 
-  Expanded buildFunctionKey(String key, Function onPressed,
-      {TextStyle textStyle}) {
-    if (textStyle == null) {
-      textStyle = TextStyle(
-        color: Colors.white,
-        fontFamily: 'Avenir',
-        fontStyle: FontStyle.normal,
-        fontSize: 50.0,
-        fontWeight: FontWeight.w300,
-      );
-    }
-
+  Expanded buildFunctionKey(String key, {Function onPressed, Color textColor}) {
     return Expanded(
-      child: FlatButton(
-        onPressed: onPressed,
-        child: Text(
-          key,
-          style: textStyle,
-        ),
+      child: createFlatButton(key, onPressed ?? _addOperator(key),
+          textColor: textColor ?? defaultOrange),
+    );
+  }
+
+  FlatButton createFlatButton(String key, Function onPressed,
+      {Color textColor, Color backgroundColor}) {
+    return FlatButton(
+      onPressed: onPressed,
+      child: Text(
+        key,
+        style: defaultButtonTextStyle.apply(color: textColor),
       ),
+      color: backgroundColor,
+      highlightColor: Colors.black26,
     );
   }
 }
